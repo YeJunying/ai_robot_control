@@ -1,0 +1,6 @@
+<launch>
+    <node pkg="demo_behaviortree" type="run_bh_tree" name="run_bh_tree" output="screen">
+        <param name="file_path" type="string" value="$(find demo_behaviortree)/config/main_tree.xml"/>
+        <rosparam file="$(find demo_behaviortree)/config/add_two_int.yaml" command="load"/>
+    </node>
+</launch>
