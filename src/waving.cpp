@@ -1,10 +1,12 @@
 #include "waving.h"
 
+bool Waving::waving_start_flag_ = false;
+
 Waving::Waving(const std::string& name, const BT::NodeConfiguration& config, const ros::NodeHandle& root_nh)
     : BT::SyncActionNode(name, config) 
 {
     ros::NodeHandle nh_(root_nh);
-    waving_start_flag_ = false;
+    // waving_start_flag_ = false;
     active_.request.active = false;
     waving_toggle_srv_ = nh_.serviceClient<ai_robot_waving::ToggleModule>("/ai_robot/waving/toggle");
     target_pub_ = nh_.advertise<ai_robot_waving::SendLocalTargetRequest>("/ai_robot/control/target_pose", 1);
@@ -15,7 +17,7 @@ Waving::~Waving() {}
 
 BT::NodeStatus Waving::tick()
 {
-    if(!waving_start_flag_)
+    if(!Waving::waving_start_flag_)
     {
         //激活招手识别
         active_.request.active = true;
@@ -24,7 +26,7 @@ BT::NodeStatus Waving::tick()
 
         if(flag_)
         {
-            waving_start_flag_ = true;
+            Waving::waving_start_flag_ = true;
             ROS_INFO("Start waving successfully.");
         }
         return BT::NodeStatus::SUCCESS;
@@ -35,7 +37,7 @@ BT::NodeStatus Waving::tick()
         active_.request.active = false;
         bool flag = waving_toggle_srv_.call(active_);
 
-        waving_start_flag_ = false;
+        Waving::waving_start_flag_ = false;
 
         if(flag)
         {

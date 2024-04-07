@@ -35,7 +35,7 @@ private:
     ai_robot_waving::SendLocalTargetRequest target_pose_;
     // bool goal_pubCb(const ai_robot_waving::SendLocalTargetRequestConstPtr& msg);
     bool goal_pubCb(ai_robot_waving::SendLocalTarget::Request& req, ai_robot_waving::SendLocalTarget::Response& res);
-    bool waving_start_flag_;
+    static bool waving_start_flag_;
 
     ros::ServiceServer server_;
 };

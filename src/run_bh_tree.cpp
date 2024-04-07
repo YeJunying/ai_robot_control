@@ -46,7 +46,7 @@ int main(int argc, char **argv)
     };
     factory.registerBuilder<Tracking_client>("tracking", builder_tracking);
     
-    //读取n行为树xml文件，生成行为树
+    //读取行为树xml文件，生成行为树
     std::string file_path = bh_tree_nh.param("file_path", std::string(" "));
     auto tree = factory.createTreeFromFile(file_path);
     // auto tree = factory.createTreeFromFile("./main_tree.xml");
