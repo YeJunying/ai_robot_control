@@ -1,7 +1,7 @@
 #include <behaviortree_cpp_v3/bt_factory.h>
 #include <ros/ros.h>
 
-// #include "tracking_client.h"
+#include "tracking_client.h"
 #include "waving.h"
 #include "waving_detected.h"
 
@@ -32,16 +32,16 @@ int main(int argc, char **argv)
     factory.registerBuilder<Waving_detected>("waving_detected", builder_waving_detected);
 
     //注册行人跟踪行为节点
-    // BT::NodeBuilder builder_tracking = [&nh](const std::string& name, const BT::NodeConfiguration& config)
-    // {
-    //     return std::make_unique<Tracking_client>(name, config, nh);
-    // };
-    // factory.registerBuilder<Tracking_client>("tracking", builder_tracking);
+    BT::NodeBuilder builder_tracking = [&nh](const std::string& name, const BT::NodeConfiguration& config)
+    {
+        return std::make_unique<Tracking_client>(name, config, nh);
+    };
+    factory.registerBuilder<Tracking_client>("tracking", builder_tracking);
     
     //读取n行为树xml文件，生成行为树
     std::string file_path = bh_tree_nh.param("file_path", std::string(" "));
     auto tree = factory.createTreeFromFile(file_path);
-
+    // auto tree = factory.createTreeFromFile("./main_tree.xml");
     //运行行为树
     ros::Rate loop_rate(bh_loop_freq); //设置行为树运行频率
     while(ros::ok())

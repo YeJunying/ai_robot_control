@@ -16,8 +16,9 @@ BT::NodeStatus Waving_detected::tick()
     if(waving_detected_flag)
     {
         waving_detected_flag = false;
-        return BT::NodeStatus::SUCCESS;
+        ROS_INFO("Detected waving.");
     }
+    return BT::NodeStatus::SUCCESS;
 }
 
 void Waving_detected::detectedCb(const ai_robot_waving::SendLocalTargetRequestConstPtr& msg)

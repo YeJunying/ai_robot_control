@@ -28,7 +28,7 @@ generate_messages(DEPENDENCIES
 )
 
 catkin_package(
-  INCLUDE_DIRS include
+  # INCLUDE_DIRS include
   CATKIN_DEPENDS
     geometry_msgs
     roscpp
@@ -39,20 +39,20 @@ catkin_package(
 )
 
 include_directories(
-  include
+  # include
   ${catkin_INCLUDE_DIRS}
 )
 
-# add_executable(tracking_server
-#   # src/tracking_server_node.cpp
-#   src/tracking_server.cpp
-# )
-# add_dependencies(tracking_server ${catkin_EXPORTED_TARGETS})
-# target_link_libraries(tracking_server ${catkin_LIBRARIES})
+add_executable(tracking_server
+  src/tracking_server_node.cpp
+  src/tracking_server.cpp
+)
+add_dependencies(tracking_server ${catkin_EXPORTED_TARGETS})
+target_link_libraries(tracking_server ${catkin_LIBRARIES})
 
 add_executable(bh_tree_node 
   src/run_bh_tree.cpp
-  # src/tracking_client.cpp
+  src/tracking_client.cpp
   src/waving.cpp
   src/waving_detected.cpp
 )

@@ -7,7 +7,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <sensor_msgs/Image.h>
 #include <actionlib/server/simple_action_server.h>
-#include <ai_robot_control/trackingAction.h>
+#include "ai_robot_control/trackingAction.h"
 #include <ai_robot_waving/SendLocalTarget.h>
 // #include <ai_robot_tracking/ToggleModule.h>
 
@@ -19,14 +19,15 @@ public:
     Tracking_server();
     ~Tracking_server();
 private:
-    void executeCb(const ai_robot_control::trackingActionGoalConstPtr& tracking_goal, trackingServer* as);
-    void target_poseCb(const ai_robot_control::trackingActionFeedbackConstPtr& msg);
+    void executeCb(const ai_robot_control::trackingGoalConstPtr& tracking_goal);
+    void target_poseCb(const ai_robot_control::trackingFeedbackConstPtr& msg);
     ros::NodeHandle nh_;
     ros::ServiceClient target_send_srv_;
     ros::Subscriber target_pose_sub_;
 
     double control_freq_;
-    ai_robot_control::trackingActionFeedback target_pose;
+    ai_robot_control::trackingFeedback target_pose;
+    trackingServer* as_;
 
 };
 

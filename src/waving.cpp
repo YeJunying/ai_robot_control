@@ -8,7 +8,7 @@ Waving::Waving(const std::string& name, const BT::NodeConfiguration& config, con
     active_.request.active = false;
     waving_toggle_srv_ = nh_.serviceClient<ai_robot_waving::ToggleModule>("/ai_robot/waving/toggle");
     target_pub_ = nh_.advertise<ai_robot_waving::SendLocalTargetRequest>("/ai_robot/control/target_pose", 1);
-    ros::ServiceServer server_ = nh_.advertiseService<ai_robot_waving::SendLocalTargetRequest>("/ai_robot/waving/target_pose", &Waving::goal_pubCb);
+    server_ = nh_.advertiseService("/ai_robot/waving/target_pose", &Waving::goal_pubCb, this);
 }
 
 Waving::~Waving() {}
@@ -23,8 +23,9 @@ BT::NodeStatus Waving::tick()
 
         if(waving_start_flag_)
         {
-            return BT::NodeStatus::SUCCESS;
+            ROS_INFO("Start waving successfully.");
         }
+        return BT::NodeStatus::SUCCESS;
     }
     else
     {
@@ -36,16 +37,25 @@ BT::NodeStatus Waving::tick()
 
         if(flag)
         {
-            return BT::NodeStatus::SUCCESS;
+            ROS_INFO("Close waving successfully.");
         }
+        return BT::NodeStatus::SUCCESS;
     }
-    
 }
 
-void Waving::goal_pubCb(const ai_robot_waving::SendLocalTargetRequestConstPtr& msg)
+// bool Waving::goal_pubCb(const ai_robot_waving::SendLocalTargetRequestConstPtr& msg)
+// {
+//     target_pose_.target = msg->target;
+//     target_pose_.target_image = msg->target_image;
+//     target_pub_.publish(target_pose_);
+//     waving_start_flag_ = true;
+//     return true;
+// }
+bool Waving::goal_pubCb(ai_robot_waving::SendLocalTarget::Request& req, ai_robot_waving::SendLocalTarget::Response& res)
 {
-    target_pose_.target = msg->target;
-    target_pose_.target_image = msg->target_image;
+    target_pose_.target = req.target;
+    target_pose_.target_image = req.target_image;
     target_pub_.publish(target_pose_);
     waving_start_flag_ = true;
+    return true;
 }

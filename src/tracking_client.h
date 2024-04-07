@@ -31,14 +31,14 @@ public:
 private:
     ros::Subscriber pose_sub_;
     ros::Publisher point_pub_;
-    ai_robot_control::trackingActionGoal goal;
+    ai_robot_control::trackingGoal goal;
     ros::ServiceClient tracking_toggle_srv_;
     ai_robot_tracking::ToggleModule active_;
-    void feedbackCb(const ai_robot_control::trackingActionFeedbackConstPtr& msg);
+    void feedbackCb(const ai_robot_control::trackingFeedbackConstPtr& msg);
     void goal_sendCb(const ai_robot_waving::SendLocalTargetRequestConstPtr& msg);
     void doneCb();
     void activeCb();
-    // trackingClient client_;
+    trackingClient* client_;
 };
 
 #endif //!TRACKING_CLIENT_H
