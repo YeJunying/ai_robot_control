@@ -4,6 +4,7 @@
 #include "tracking_client.h"
 #include "waving.h"
 #include "waving_detected.h"
+#include "await.h"
 
 int main(int argc, char **argv)
 {
@@ -16,6 +17,13 @@ int main(int argc, char **argv)
     bh_tree_nh.param("bh_loop_freq", bh_loop_freq, 5.0);
     
     BT::BehaviorTreeFactory factory;
+
+    //注册待机行为节点
+    BT::NodeBuilder builder_await = [&nh](const std::string& name, const BT::NodeConfiguration& config)
+    {
+        return std::make_unique<Await>(name, config, nh);
+    };
+    factory.registerBuilder<Await>("await", builder_await);
 
     //注册招手识别行为节点
     BT::NodeBuilder builder_waving = [&nh](const std::string& name, const BT::NodeConfiguration& config)

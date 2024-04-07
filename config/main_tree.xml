@@ -1,6 +1,7 @@
 <root main_tree_to_execute = "MainTree">
     <BehaviorTree ID="MainTree">
         <Sequence>
+            <await/>
             <waving/>
             <waving_detected/>
             <waving/>

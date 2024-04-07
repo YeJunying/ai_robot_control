@@ -55,6 +55,7 @@ add_executable(bh_tree_node
   src/tracking_client.cpp
   src/waving.cpp
   src/waving_detected.cpp
+  src/await.cpp
 )
 add_dependencies(bh_tree_node ${catkin_EXPORTED_TARGETS})
 target_link_libraries(bh_tree_node ${catkin_LIBRARIES})
