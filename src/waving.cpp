@@ -19,10 +19,12 @@ BT::NodeStatus Waving::tick()
     {
         //激活招手识别
         active_.request.active = true;
-        waving_toggle_srv_.call(active_);
+        waving_toggle_srv_.waitForExistence();
+        bool flag_ = waving_toggle_srv_.call(active_);
 
-        if(waving_start_flag_)
+        if(flag_)
         {
+            waving_start_flag_ = true;
             ROS_INFO("Start waving successfully.");
         }
         return BT::NodeStatus::SUCCESS;
@@ -56,6 +58,6 @@ bool Waving::goal_pubCb(ai_robot_waving::SendLocalTarget::Request& req, ai_robot
     target_pose_.target = req.target;
     target_pose_.target_image = req.target_image;
     target_pub_.publish(target_pose_);
-    waving_start_flag_ = true;
+    // waving_start_flag_ = true;
     return true;
 }

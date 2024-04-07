@@ -12,13 +12,14 @@
 // #include <ai_robot_waving/ToggleModule.h>
 #include <behaviortree_cpp_v3/action_node.h>
 
-class Waving_detected : public BT::SyncActionNode
+class Waving_detected : public BT::StatefulActionNode
 {
 public:
     Waving_detected(const std::string& name, const BT::NodeConfiguration& config, const ros::NodeHandle& root_nh);
     ~Waving_detected();
-    BT::NodeStatus tick() override;
-
+    BT::NodeStatus onStart() override;
+    BT::NodeStatus onRunning() override;
+    void onHalted() override;
     //处理接口参数
     static BT::PortsList providedPorts() 
     {
