@@ -11,6 +11,8 @@ Waving::Waving(const std::string& name, const BT::NodeConfiguration& config, con
     waving_toggle_srv_ = nh_.serviceClient<ai_robot_waving::ToggleModule>("/ai_robot/waving/toggle");
     target_pub_ = nh_.advertise<ai_robot_waving::SendLocalTargetRequest>("/ai_robot/control/target_pose", 1);
     server_ = nh_.advertiseService("/ai_robot/waving/target_pose", &Waving::goal_pubCb, this);
+    target_image_pub_ = nh_.advertise<sensor_msgs::Image>("/ai_robot/control/target_image", 1);
+
 }
 
 Waving::~Waving() {}
@@ -60,6 +62,7 @@ bool Waving::goal_pubCb(ai_robot_waving::SendLocalTarget::Request& req, ai_robot
     target_pose_.target = req.target;
     target_pose_.target_image = req.target_image;
     target_pub_.publish(target_pose_);
+    target_image_pub_.publish(target_pose_.target_image);
     // waving_start_flag_ = true;
     return true;
 }
