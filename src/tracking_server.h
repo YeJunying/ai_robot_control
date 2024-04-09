@@ -10,7 +10,7 @@
 #include "ai_robot_control/trackingAction.h"
 #include <ai_robot_waving/SendLocalTarget.h>
 #include <ai_robot_tracking/ReceiveTarget.h>
-// #include <ai_robot_tracking/ToggleModule.h>
+#include <ai_robot_tracking/ToggleModule.h>
 
 typedef actionlib::SimpleActionServer<ai_robot_control::trackingAction> trackingServer; 
 
@@ -25,7 +25,9 @@ private:
     ros::NodeHandle nh_;
     ros::ServiceClient target_send_srv_;
     ros::Subscriber target_pose_sub_;
-    ros::Publisher target_image_pub_;
+    // ros::Publisher target_image_pub_;
+    ros::ServiceClient tracking_toggle_srv_;
+    ai_robot_tracking::ToggleModule active_;
 
     double control_freq_;
     ai_robot_control::trackingFeedback target_pose;
