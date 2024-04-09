@@ -1,6 +1,6 @@
 <launch>
-    <arg name="server_feedback_freq" default="10.0" />
-    <arg name="bh_loop_freq" default="5.0" />
+    <arg name="server_feedback_freq" default="1.0" />
+    <arg name="bh_loop_freq" default="1.0" />
     <arg name="bh_tree_file" default="$(find ai_robot_control)/config/main_tree.xml" />
 
     <node pkg="ai_robot_control" type="tracking_server" name="tracking_server" output="screen" respawn="true">

@@ -9,6 +9,7 @@
 #include <actionlib/server/simple_action_server.h>
 #include "ai_robot_control/trackingAction.h"
 #include <ai_robot_waving/SendLocalTarget.h>
+#include <ai_robot_tracking/ReceiveTarget.h>
 // #include <ai_robot_tracking/ToggleModule.h>
 
 typedef actionlib::SimpleActionServer<ai_robot_control::trackingAction> trackingServer; 
@@ -20,10 +21,11 @@ public:
     ~Tracking_server();
 private:
     void executeCb(const ai_robot_control::trackingGoalConstPtr& tracking_goal);
-    void target_poseCb(const ai_robot_control::trackingFeedbackConstPtr& msg);
+    void target_poseCb(const geometry_msgs::PoseStampedConstPtr& msg);
     ros::NodeHandle nh_;
     ros::ServiceClient target_send_srv_;
     ros::Subscriber target_pose_sub_;
+    ros::Publisher target_image_pub_;
 
     double control_freq_;
     ai_robot_control::trackingFeedback target_pose;

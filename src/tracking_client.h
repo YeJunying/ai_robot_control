@@ -39,6 +39,7 @@ private:
     void doneCb();
     void activeCb();
     trackingClient* client_;
+    // bool is_goal_sent_;
 };
 
 #endif //!TRACKING_CLIENT_H

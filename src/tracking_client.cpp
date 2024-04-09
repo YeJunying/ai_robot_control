@@ -4,6 +4,7 @@ Tracking_client::Tracking_client(const std::string& name, const BT::NodeConfigur
     : BT::SyncActionNode(name, config) 
 {
     ros::NodeHandle nh_(root_nh);
+    // is_goal_sent_ = false;
 
     client_ = new trackingClient("/ai_robot_control/tracking_", true);
     client_->waitForServer();
@@ -37,25 +38,25 @@ BT::NodeStatus Tracking_client::tick()
                         boost::bind(&Tracking_client::activeCb, this), 
                         boost::bind(&Tracking_client::feedbackCb, this, _1));
         // client_.sendGoal(goal.goal);
-    
-        if(client_->getState() == actionlib::SimpleClientGoalState::ACTIVE && flag)
-        {
-            ROS_INFO("Tracking is active and has gotten the goal.");
-        }
+        // std::cout<<client_->getState().toString()<<std::endl;
+        // if(flag)
+        // {
+        //     ROS_INFO("Tracking is active and has gotten the goal.");
+        // }
         return BT::NodeStatus::SUCCESS;
     }
     else
     {
         //取消目标
-        client_->cancelAllGoals();
-
+        client_->cancelGoal();
+        // std::cout<<client_->getState().toString()<<std::endl;
         //挂起跟踪模块中转节点
         active_.request.active = false;
         bool flag = tracking_toggle_srv_.call(active_);
-        if(client_->getState() == actionlib::SimpleClientGoalState::PREEMPTED && flag)
-        {
-            ROS_INFO("The goal has been canceled.");
-        }
+        // if(flag)
+        // {
+        //     ROS_INFO("The goal has been canceled.");
+        // }
         return BT::NodeStatus::SUCCESS;
     }
 }
@@ -67,6 +68,7 @@ void Tracking_client::feedbackCb(const ai_robot_control::trackingFeedbackConstPt
     pose_ = msg->pose;
 
     point_pub_.publish(pose_);
+    ROS_INFO("Get the feedback.");
 }
     
 void Tracking_client::goal_sendCb(const ai_robot_waving::SendLocalTargetRequestConstPtr& msg)
@@ -75,5 +77,12 @@ void Tracking_client::goal_sendCb(const ai_robot_waving::SendLocalTargetRequestC
     goal.target_image = msg->target_image;
 }
 
-void Tracking_client::doneCb() {}
-void Tracking_client::activeCb() {}
+void Tracking_client::doneCb() 
+{
+    ROS_INFO("The goal has been canceled.");
+}
+void Tracking_client::activeCb() 
+{
+    // is_goal_sent_ = true;
+    ROS_INFO("Tracking is active and has gotten the goal.");
+}
