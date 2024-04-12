@@ -1,10 +1,14 @@
 <launch>
-    <arg name="server_feedback_freq" default="1.0" />
-    <arg name="bh_loop_freq" default="1.0" />
+    <arg name="server_feedback_freq" default="2.0" />
+    <arg name="bh_loop_freq" default="5.0" />
+    <arg name="tracking_distance" default="0.7"/>
     <arg name="bh_tree_file" default="$(find ai_robot_control)/config/main_tree.xml" />
+
+    <node pkg="tf2_ros" type="static_transform_publisher" name="static_tf_publisher" args="0.011 0.018 0.013 0 0 0 camera_base_link camera_link"/> 
 
     <node pkg="ai_robot_control" type="tracking_server" name="tracking_server" output="screen" respawn="true">
         <param name="control_freq" type="double" value="$(arg server_feedback_freq)" />
+        <param name="tracking_distance" type="double" value="$(arg tracking_distance)" />
     </node>
 
     <node pkg="ai_robot_control" type="bh_tree_node" name="bh_tree" output="screen">

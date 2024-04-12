@@ -68,7 +68,7 @@ void Tracking_client::feedbackCb(const ai_robot_control::trackingFeedbackConstPt
     pose_ = msg->pose;
 
     point_pub_.publish(pose_);
-    ROS_INFO("Get the feedback.");
+    // ROS_INFO("Get the feedback.");
 }
     
 void Tracking_client::goal_sendCb(const ai_robot_waving::SendLocalTargetRequestConstPtr& msg)

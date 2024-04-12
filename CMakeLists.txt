@@ -14,6 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   sensor_msgs
   std_msgs
+  tf2_ros
+  tf2
   behaviortree_cpp_v3
   ai_robot_waving
   ai_robot_tracking

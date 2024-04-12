@@ -1,12 +1,15 @@
 #include "tracking_server.h"
 
-Tracking_server::Tracking_server()
+Tracking_server::Tracking_server(tf2_ros::Buffer& tf)
+    : tf_(tf)
 {
     nh_ = ros::NodeHandle();
     ros::NodeHandle private_nh("~");
     private_nh.param("control_freq", control_freq_, 10.0);
+    private_nh.param("tracking_distance", tracking_distance_, 0.5);
 
     active_.request.active = false;
+    feedback_flag = false;
     tracking_toggle_srv_ = nh_.serviceClient<ai_robot_tracking::ToggleModule>("/ai_robot/tracking/toggle");
 
     target_send_srv_ = nh_.serviceClient<ai_robot_tracking::ReceiveTarget>("/ai_robot/tracking/target");
@@ -61,6 +64,12 @@ void Tracking_server::executeCb(const ai_robot_control::trackingGoalConstPtr& tr
                 return;
             }
         }
+
+        if(feedback_flag)
+        {
+            as_->publishFeedback(target_pose);
+            feedback_flag = false;
+        }
         ROS_INFO("Tracking is running.");
         // std::cout<<as_->isActive()<<std::endl;
         r.sleep();
@@ -69,6 +78,35 @@ void Tracking_server::executeCb(const ai_robot_control::trackingGoalConstPtr& tr
 
 void Tracking_server::target_poseCb(const geometry_msgs::PoseStampedConstPtr& msg)
 {
-    target_pose.pose.pose = msg->pose;
-    as_->publishFeedback(target_pose);
+    geometry_msgs::PoseStamped point_camera;
+
+    point_camera.pose = msg->pose;
+    if(point_camera.pose.position.x <= tracking_distance_)
+        point_camera.pose.position.x = 0;
+    else
+        point_camera.pose.position.x -= tracking_distance_;
+
+    if(std::abs(point_camera.pose.position.y) < 0.07)
+        point_camera.pose.position.y = 0;
+
+    point_camera.header.frame_id = "camera_link";
+    point_camera.header.stamp = ros::Time::now();
+    geometry_msgs::TransformStamped tfs;
+    try
+    {
+        tfs = tf_.lookupTransform("map", point_camera.header.frame_id, ros::Time(point_camera.header.stamp), ros::Duration(0.1));
+
+        target_pose.pose = tf_.transform(point_camera, "map");
+        target_pose.pose.pose.position.z = 0;
+        target_pose.pose.pose.orientation = point_camera.pose.orientation;
+
+        if(point_camera.pose.position.x != 0)
+            feedback_flag = true;
+        
+    }
+    catch(tf2::LookupException &ex)
+    {
+        ROS_ERROR("%s", ex.what());
+    }
+    
 }

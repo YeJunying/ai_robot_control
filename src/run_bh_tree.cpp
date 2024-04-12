@@ -1,10 +1,20 @@
 #include <behaviortree_cpp_v3/bt_factory.h>
 #include <ros/ros.h>
+#include <tf2_ros/static_transform_broadcaster.h>
+#include <geometry_msgs/TransformStamped.h>
+#include <tf2/LinearMath/Quaternion.h>
 
 #include "tracking_client.h"
 #include "waving.h"
 #include "waving_detected.h"
 #include "await.h"
+
+const double X = 0.24376;
+const double Y = -0.012728;
+const double Z = 0.475118;
+const double ROLL = 0.0;
+const double PITCH = 0.0;
+const double YAW =0.0;
 
 int main(int argc, char **argv)
 {
@@ -13,6 +23,29 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
     ros::NodeHandle bh_tree_nh("~");
 
+    tf2_ros::StaticTransformBroadcaster broadcaster;
+    geometry_msgs::TransformStamped ts_;
+
+    //相机到底盘的静态坐标变换
+    ts_.header.seq = 100;
+    ts_.header.stamp = ros::Time::now();
+    ts_.header.frame_id = "base_link";
+    ts_.child_frame_id = "camera_base_link";
+
+    ts_.transform.translation.x = X;
+    ts_.transform.translation.y = Y;
+    ts_.transform.translation.z = Z;
+
+    tf2::Quaternion qtn;
+    qtn.setRPY(ROLL, PITCH, YAW);
+    ts_.transform.rotation.x = qtn.getX();
+    ts_.transform.rotation.y = qtn.getY();
+    ts_.transform.rotation.z = qtn.getZ();
+    ts_.transform.rotation.w = qtn.getW();
+
+    broadcaster.sendTransform(ts_);
+
+    //获取行为树运行频率参数
     double bh_loop_freq;
     bh_tree_nh.param("bh_loop_freq", bh_loop_freq, 5.0);
     
@@ -55,7 +88,7 @@ int main(int argc, char **argv)
     while(ros::ok())
     {
         BT::NodeStatus status = tree.tickRoot();
-        std::cout<< status << std::endl;
+        // std::cout<< status << std::endl;
         loop_rate.sleep();
         ros::spinOnce();
     }

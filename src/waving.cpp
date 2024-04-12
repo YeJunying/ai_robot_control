@@ -61,6 +61,7 @@ bool Waving::goal_pubCb(ai_robot_waving::SendLocalTarget::Request& req, ai_robot
 {
     target_pose_.target = req.target;
     target_pose_.target_image = req.target_image;
+    target_pose_.target_image.header.stamp = ros::Time::now();
     target_pub_.publish(target_pose_);
     // target_image_pub_.publish(target_pose_.target_image);
     // waving_start_flag_ = true;
