@@ -88,15 +88,21 @@ void Tracking_client::vel_subCb(const geometry_msgs::TwistConstPtr& msg)
 {
     bool is_stop = (msg->linear.x == 0 && msg->linear.y == 0 && msg->angular.z == 0);
 
-    if(is_tracking && is_stop && (!is_feedback))
-    {
-        vel_pub_.publish(spin_vel_);
-    }
-
     if(!is_stop)
     {
         is_feedback = false;
     }
+
+    if(is_tracking && is_stop && (!is_feedback))
+    {
+        ROS_INFO("Lose the target.");
+        for(int i=0; i<50; ++i)
+        {
+            vel_pub_.publish(spin_vel_);
+        }
+    }
+
+    
 }
 
 void Tracking_client::tracking_poseCb(const geometry_msgs::PoseStampedConstPtr& msg)

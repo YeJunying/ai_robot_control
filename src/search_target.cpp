@@ -51,7 +51,9 @@ BT::NodeStatus Search_target::onStart()
     {
         ROS_ERROR("Read the picture failed!");
     }
-    // sensor_msgs::ImagePtr target_ = cv_bridge::CvImage(std_msgs::Header(), "bgr8", image).toImageMsg();
+    // std_msgs::Header header_;
+    // header_.stamp = ros::Time::now();
+    // sensor_msgs::ImagePtr target_ = cv_bridge::CvImage(header_, "bgr8", image).toImageMsg();
     // goal.target_image = *target_;
     cv_bridge::CvImage cvi;
     cvi.header.stamp = ros::Time::now();
