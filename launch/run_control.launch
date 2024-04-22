@@ -1,11 +1,17 @@
 <launch>
-    <arg name="server_feedback_freq" default="2.0" />
-    <arg name="bh_loop_freq" default="5.0" />
-    <arg name="tracking_distance" default="0.7"/>
+    <arg name="server_feedback_freq" default="10.0" />
+    <arg name="bh_loop_freq" default="2.0" />
+    <arg name="tracking_distance" default="1.0"/>
+    <arg name="wander_angle_vel" default="45.0"/>
+    <arg name="wander_linear_vel" default="0.8"/>
+    <arg name="cmd_vel_topic_name" default="sim_p3at/cmd_vel"/>
+    <arg name="odom_topic_name" default="sim_p3at/odom"/>
     <arg name="bh_tree_file" default="$(find ai_robot_control)/config/main_tree.xml" />
 
-    <node pkg="tf2_ros" type="static_transform_publisher" name="static_tf_publisher" args="0.011 0.018 0.013 0 0 0 camera_base_link camera_link"/> 
+    <include file="$(find vehicle_simulator)/launch/ai_robot_sim_local_planner.launch" />
 
+    <node pkg="tf2_ros" type="static_transform_publisher" name="static_tf_publisher" args="0.011 0.018 0.013 0 0 0 camera_base_link camera_link"/> 
+    
     <node pkg="ai_robot_control" type="tracking_server" name="tracking_server" output="screen" respawn="true">
         <param name="control_freq" type="double" value="$(arg server_feedback_freq)" />
         <param name="tracking_distance" type="double" value="$(arg tracking_distance)" />
@@ -14,5 +20,13 @@
     <node pkg="ai_robot_control" type="bh_tree_node" name="bh_tree" output="screen">
         <param name="bh_loop_freq" type="double" value="$(arg bh_loop_freq)" />
         <param name="file_path" type="string" value="$(arg bh_tree_file)"/>
+        <param name="angle_vel" type="double" value="$(arg wander_angle_vel)" />
+        <param name="linear_vel" type="double" value="$(arg wander_linear_vel)" />
+        <remap from="cmd_vel" to="$(arg cmd_vel_topic_name)" />
+        <remap from="odom" to="$(arg odom_topic_name)" />
     </node>
+
+    <include file="$(find ai_robot_waving)/launch/start_d435i.launch" />
+    <include file="$(find ai_robot_tracking)/launch/start_d435i.launch" />
+
 </launch>

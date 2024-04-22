@@ -8,6 +8,8 @@
 #include "waving.h"
 #include "waving_detected.h"
 #include "await.h"
+#include "show.h"
+#include "search_target.h"
 
 const double X = 0.24376;
 const double Y = -0.012728;
@@ -78,6 +80,20 @@ int main(int argc, char **argv)
         return std::make_unique<Tracking_client>(name, config, nh);
     };
     factory.registerBuilder<Tracking_client>("tracking", builder_tracking);
+
+    //注册表演行为节点
+    BT::NodeBuilder builder_show = [&nh](const std::string& name, const BT::NodeConfiguration& config)
+    {
+        return std::make_unique<Show>(name, config, nh);
+    };
+    factory.registerBuilder<Show>("show", builder_show);
+
+    //注册目标搜寻节点
+    BT::NodeBuilder builder_search_target = [&nh](const std::string& name, const BT::NodeConfiguration& config)
+    {
+        return std::make_unique<Search_target>(name, config, nh);
+    };
+    factory.registerBuilder<Search_target>("search_target", builder_search_target);
     
     //读取行为树xml文件，生成行为树
     std::string file_path = bh_tree_nh.param("file_path", std::string(" "));

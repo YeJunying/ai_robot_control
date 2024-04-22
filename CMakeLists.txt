@@ -19,6 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
   behaviortree_cpp_v3
   ai_robot_waving
   ai_robot_tracking
+  cv_bridge
 )
 
 
@@ -30,7 +31,7 @@ generate_messages(DEPENDENCIES
 )
 
 catkin_package(
-  # INCLUDE_DIRS include
+  INCLUDE_DIRS include
   CATKIN_DEPENDS
     geometry_msgs
     roscpp
@@ -43,6 +44,7 @@ catkin_package(
 include_directories(
   # include
   ${catkin_INCLUDE_DIRS}
+  /usr/include
 )
 
 add_executable(tracking_server
@@ -58,6 +60,8 @@ add_executable(bh_tree_node
   src/waving.cpp
   src/waving_detected.cpp
   src/await.cpp
+  src/show.cpp
+  src/search_target.cpp
 )
 add_dependencies(bh_tree_node ${catkin_EXPORTED_TARGETS})
 target_link_libraries(bh_tree_node ${catkin_LIBRARIES})

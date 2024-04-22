@@ -31,7 +31,7 @@ private:
     ros::NodeHandle nh_;
     ros::ServiceClient target_send_srv_;
     ros::Subscriber target_pose_sub_;
-    // ros::Publisher target_image_pub_;
+    ros::Publisher target_image_pub_;
     ros::ServiceClient tracking_toggle_srv_;
     ai_robot_tracking::ToggleModule active_;
 

@@ -15,7 +15,7 @@ Tracking_server::Tracking_server(tf2_ros::Buffer& tf)
     target_send_srv_ = nh_.serviceClient<ai_robot_tracking::ReceiveTarget>("/ai_robot/tracking/target");
 
     target_pose_sub_= nh_.subscribe("/ai_robot/tracking/target_pose", 1000, &Tracking_server::target_poseCb, this);
-    // target_image_pub_ = nh_.advertise<sensor_msgs::Image>("/ai_robot/control/target_image", 1);
+    target_image_pub_ = nh_.advertise<sensor_msgs::Image>("/ai_robot/control/target_image", 1);
 
     // trackingServer as_(nh_, "/ai_robot_control/tracking_", boost::bind(&Tracking_server::executeCb, _1, &as_), false);
     as_ = new trackingServer(nh_, "/ai_robot_control/tracking_", [this](auto& goal){ executeCb(goal); }, false);
@@ -36,7 +36,7 @@ void Tracking_server::executeCb(const ai_robot_control::trackingGoalConstPtr& tr
     ai_robot_tracking::ReceiveTarget goal_;
     goal_.request.target_image = tracking_goal->target_image;
     target_send_srv_.call(goal_);
-    // target_image_pub_.publish(goal_.request.target_image);
+    target_image_pub_.publish(goal_.request.target_image);
 
     //激活跟踪模块中转节点
     active_.request.active = true;
@@ -81,10 +81,10 @@ void Tracking_server::target_poseCb(const geometry_msgs::PoseStampedConstPtr& ms
     geometry_msgs::PoseStamped point_camera;
 
     point_camera.pose = msg->pose;
-    if(point_camera.pose.position.x <= tracking_distance_)
-        point_camera.pose.position.x = 0;
-    else
-        point_camera.pose.position.x -= tracking_distance_;
+    // if(point_camera.pose.position.x <= tracking_distance_)
+    //     point_camera.pose.position.x = 0;
+    // else
+    point_camera.pose.position.x -= tracking_distance_;
 
     if(std::abs(point_camera.pose.position.y) < 0.07)
         point_camera.pose.position.y = 0;

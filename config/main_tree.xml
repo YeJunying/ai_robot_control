@@ -2,6 +2,8 @@
     <BehaviorTree ID="MainTree">
         <Sequence>
             <await/>
+            <search_target/>
+            <show/>
             <waving/>
             <waving_detected/>
             <waving/>
